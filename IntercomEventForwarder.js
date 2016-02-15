@@ -25,6 +25,13 @@
             Commerce    : 16
         };
 
+    function createObject(key, value) {
+        var obj  = {};
+        obj[key] = value;
+
+        return obj;
+    }
+
     var constructor = function () {
         var self              = this,
             isInitialized     = false,
@@ -34,22 +41,19 @@
 
         self.name = name;
 
-        function initForwarder(settings, service, testMode) {
-            var appid         = settings.appid;
 
+        function initForwarder(settings, service, testMode) {
             forwarderSettings = settings;
             reportingService  = service;
 
             try {
 
                 if(!testMode) {
-
-                    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update');}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;
-                    s.src='https://widget.intercom.io/widget/'+appid;
+                    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update');}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;                    s.src='https://widget.intercom.io/widget/{app_id}';
                     var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
                 }
 
-                bootIntercom({app_id: appid});
+                bootIntercom();
                 isInitialized = true;
                 return 'Successfully initialized: ' + name;
             }
@@ -58,19 +62,25 @@
             }
         }
 
-        function bootIntercom(data) {
-            if(!data ||
-                !data.app_id) {
-
-                return 'Can\'t boot forwarder: ' + name + ', data is null';
+        function bootIntercom() {
+            var appid = forwarderSettings.appid;
+            if(!appid) {
+                return 'Can\'t boot forwarder: ' + name + ', appid is not defined';
             }
 
+            var obj      = createObject('app_id', appid),
+                widgetId = forwarderSettings.widgetid || '#IntercomDefaultWidget';
+
+            obj.widget   = createObject('activator', widgetId);
+
+
             try {
-                window.Intercom('boot', data);
+                window.Intercom('boot', obj);
             }
             catch (e) {
                 return 'Can\'t initialize forwarder: ' + name + ': ' + e;
             }
+            return 'Successfully booted: ' + name;
         }
 
 
@@ -118,6 +128,7 @@
             catch (e) {
                 return 'Can\'t log event on forwarder: ' + name + ': ' + e;
             }
+            return 'Successfully logged event from forwarder: ' + name;
         }
 
         function setUserAttribute(key, value) {
@@ -125,8 +136,7 @@
                 return 'Can\'t set user identity on forwarder: ' + name + ', not initialized';
             }
 
-            var attr = {};
-            attr[key] = value;
+            var attr = createObject(key, value);
 
             try {
                 window.Intercom('update', attr);
@@ -134,6 +144,7 @@
             catch (e) {
                 return 'Can\'t set user attribute on forwarder: ' + name + ': ' + e;
             }
+            return 'Successfully called update on forwarder: ' + name;
         }
 
         function setUserIdentity(id, type) {
@@ -158,8 +169,7 @@
                 return;
             }
 
-            var obj = {};
-            obj[key] = id;
+            var obj = createObject(key, id);
 
             try {
                 window.Intercom('update', obj);
@@ -167,6 +177,7 @@
             catch(e) {
                 return 'Can\'t call identify on forwarder: ' + name + ': ' + e;
             }
+            return 'Successfully called update on forwarder: ' + name;
         }
 
         this.init             = initForwarder;

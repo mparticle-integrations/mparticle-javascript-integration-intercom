@@ -106,7 +106,7 @@ describe('Intercom Forwarder', function () {
         mParticle.IdentityType = IdentityType;
 
         mParticle.forwarder.init({
-            appId: 'mn2fsx4v'
+            appid: 'mn2fsx4v'
         }, reportService.cb, 1, true);
     });
 
@@ -116,12 +116,26 @@ describe('Intercom Forwarder', function () {
     });
 
     describe('Init the Intercom SDK', function() {
+        var obj = {
+            appid: 'mn2fsx4v'
+        };
+
         it('should boot on init', function(done) {
-            mParticle.forwarder.init({
-                appid: 'mn2fsx4v'
-            }, reportService.cb, 1, true);
+            mParticle.forwarder.init(obj, reportService.cb, 1, true);
 
             icMock.should.have.property('bootCalled', true);
+            icMock.data.should.be.instanceof(Object);
+
+            done();
+        });
+
+        it('should boot if given a widgetId', function (done) {
+            obj.widgetId = 'myWidgetId';
+
+            mParticle.forwarder.init(obj, reportService.cb, 1, true);
+
+            icMock.should.have.property('bootCalled', true);
+            icMock.data.should.be.instanceof(Object);
 
             done();
         });
