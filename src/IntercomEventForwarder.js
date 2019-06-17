@@ -14,7 +14,8 @@
 //  limitations under the License.
 
 (function (window) {
-    var name    = 'IntercomEventForwarder',
+    var name = 'IntercomEventForwarder',
+        moduleId = 18,
         MessageType = {
             SessionStart: 1,
             SessionEnd  : 2,
@@ -186,16 +187,33 @@
         this.setUserIdentity  = setUserIdentity;
     };
 
+    function getId() {
+        return moduleId;
+    }
+
+    function register(config) {
+        if (config.kits) {
+            config.kits[name] = {
+                constructor: constructor
+            };
+        }
+    }
+
     if (!window ||
         !window.mParticle ||
         !window.mParticle.addForwarder) {
 
-            return;
-        }
+        return;
+    }
 
-        window.mParticle.addForwarder({
-            name       : name,
-            constructor: constructor
-        });
+    window.mParticle.addForwarder({
+        name       : name,
+        constructor: constructor,
+        getId: getId
+    });
 
-    })(window);
+    module.exports = {
+        register: register
+    };
+
+})(window);
