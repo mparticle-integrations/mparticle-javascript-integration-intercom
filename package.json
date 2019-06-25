@@ -4,9 +4,9 @@
   "author": "mParticle Developers <developers@mparticle.com> (https://www.mparticle.com)",
   "description": "mParticle integration sdk for Intercom",
   "license": "Apache-2.0",
-  "browser": "dist/Intercom.js",
+  "browser": "dist/IntercomEventForwarder",
   "files": [
-    "dist/IntercomEventForwarder.js"
+    "dist/IntercomEventForwarder"
   ],
   "repository": "https://github.com/mparticle-integrations/mparticle-javascript-integration-intercom",
   "devDependencies": {
