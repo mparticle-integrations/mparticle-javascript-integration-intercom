@@ -1,238 +1,249 @@
-(function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-	typeof define === 'function' && define.amd ? define(['exports'], factory) :
-	(global = global || self, factory(global['mp-intercom-kit'] = {}));
-}(this, function (exports) {
-	function createCommonjsModule(fn, module) {
-		return module = { exports: {} }, fn(module, module.exports), module.exports;
-	}
+var mpIntercomKit = (function (exports) {
+  /*!
+   * isobject <https://github.com/jonschlinkert/isobject>
+   *
+   * Copyright (c) 2014-2017, Jon Schlinkert.
+   * Released under the MIT License.
+   */
 
-	var IntercomEventForwarder = createCommonjsModule(function (module) {
-	//
-	//  Copyright 2015 mParticle, Inc.
-	//
-	//  Licensed under the Apache License, Version 2.0 (the "License");
-	//  you may not use this file except in compliance with the License.
-	//  You may obtain a copy of the License at
-	//
-	//      http://www.apache.org/licenses/LICENSE-2.0
-	//
-	//  Unless required by applicable law or agreed to in writing, software
-	//  distributed under the License is distributed on an "AS IS" BASIS,
-	//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-	//  See the License for the specific language governing permissions and
-	//  limitations under the License.
+  function isObject(val) {
+    return val != null && typeof val === 'object' && Array.isArray(val) === false;
+  }
 
-	(function (window) {
-	    var name = 'IntercomEventForwarder',
-	        moduleId = 18,
-	        MessageType = {
-	            SessionStart: 1,
-	            SessionEnd  : 2,
-	            PageView    : 3,
-	            PageEvent   : 4,
-	            CrashReport : 5,
-	            OptOut      : 6,
-	            Commerce    : 16
-	        };
+  //
+  //  Copyright 2015 mParticle, Inc.
+  //
+  //  Licensed under the Apache License, Version 2.0 (the "License");
+  //  you may not use this file except in compliance with the License.
+  //  You may obtain a copy of the License at
+  //
+  //      http://www.apache.org/licenses/LICENSE-2.0
+  //
+  //  Unless required by applicable law or agreed to in writing, software
+  //  distributed under the License is distributed on an "AS IS" BASIS,
+  //  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  //  See the License for the specific language governing permissions and
+  //  limitations under the License.
 
-	    function createObject(key, value) {
-	        var obj  = {};
-	        obj[key] = value;
+      
 
-	        return obj;
-	    }
+      var name = 'IntercomEventForwarder',
+          moduleId = 18,
+          MessageType = {
+              SessionStart: 1,
+              SessionEnd  : 2,
+              PageView    : 3,
+              PageEvent   : 4,
+              CrashReport : 5,
+              OptOut      : 6,
+              Commerce    : 16
+          };
 
-	    var constructor = function () {
-	        var self              = this,
-	            isInitialized     = false,
-	            forwarderSettings = null,
-	            reportingService  = null;
+      function createObject(key, value) {
+          var obj  = {};
+          obj[key] = value;
 
+          return obj;
+      }
 
-	        self.name = name;
-
-
-	        function initForwarder(settings, service, testMode) {
-	            forwarderSettings = settings;
-	            reportingService  = service;
-
-	            try {
-
-	                if(!testMode) {
-	                    (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update');}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;                    s.src='https://widget.intercom.io/widget/{app_id}';
-	                    var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
-	                }
-
-	                bootIntercom();
-	                isInitialized = true;
-	                return 'Successfully initialized: ' + name;
-	            }
-	            catch (e) {
-	                return 'Can\'t initialize forwarder: ' + name + ': ' + e;
-	            }
-	        }
-
-	        function bootIntercom() {
-	            var appid = forwarderSettings.appid;
-	            if(!appid) {
-	                return 'Can\'t boot forwarder: ' + name + ', appid is not defined';
-	            }
-
-	            var obj      = createObject('app_id', appid),
-	                widgetId = forwarderSettings.widgetid || '#IntercomDefaultWidget';
-
-	            obj.widget   = createObject('activator', widgetId);
+      var constructor = function () {
+          var self              = this,
+              isInitialized     = false,
+              forwarderSettings = null,
+              reportingService  = null;
 
 
-	            try {
-	                window.Intercom('boot', obj);
-	            }
-	            catch (e) {
-	                return 'Can\'t initialize forwarder: ' + name + ': ' + e;
-	            }
-	            return 'Successfully booted: ' + name;
-	        }
+          self.name = name;
 
 
-	        function processEvent(event) {
-	            var reportEvent = false;
+          function initForwarder(settings, service, testMode) {
+              forwarderSettings = settings;
+              reportingService  = service;
 
-	            if (!isInitialized) {
-	                return 'Can\'t send to forwarder: ' + name + ', not initialized';
-	            }
+              try {
 
-	            try {
-	                if (event.EventDataType == MessageType.PageEvent ||
-	                    event.EventDataType == MessageType.PageView) {
+                  if(!testMode) {
+                      (function(){var w=window;var ic=w.Intercom;if(typeof ic==="function"){ic('reattach_activator');ic('update');}else{var d=document;var i=function(){i.c(arguments);};i.q=[];i.c=function(args){i.q.push(args);};w.Intercom=i;function l(){var s=d.createElement('script');s.type='text/javascript';s.async=true;                    s.src='https://widget.intercom.io/widget/{app_id}';
+                      var x=d.getElementsByTagName('script')[0];x.parentNode.insertBefore(s,x);}if(w.attachEvent){w.attachEvent('onload',l);}else{w.addEventListener('load',l,false);}}})();
+                  }
 
-	                    reportEvent = true;
-	                    logEvent(event);
+                  bootIntercom();
+                  isInitialized = true;
+                  return 'Successfully initialized: ' + name;
+              }
+              catch (e) {
+                  return 'Can\'t initialize forwarder: ' + name + ': ' + e;
+              }
+          }
 
-	                    if(reportingService) {
-	                        reportingService(self, event);
-	                    }
-	                }
-	                return 'Successfully sent to forwarder: ' + name;
-	            }
-	            catch (e) {
-	                return 'Can\'t send to forwarder: ' + name + ' ' + e;
-	            }
-	        }
+          function bootIntercom() {
+              var appid = forwarderSettings.appid;
+              if(!appid) {
+                  return 'Can\'t boot forwarder: ' + name + ', appid is not defined';
+              }
 
-	        function logEvent(event) {
-	            if (!isInitialized) {
-	                return 'Can\'t log event on forwarder: ' + name + ', not initialized';
-	            }
+              var obj      = createObject('app_id', appid),
+                  widgetId = forwarderSettings.widgetid || '#IntercomDefaultWidget';
 
-	            if(!event.EventName) {
-	                return 'Can\'t log event on forwarder: ' + name + ', no event name';
-	            }
+              obj.widget   = createObject('activator', widgetId);
 
-	            event.EventAttributes = event.EventAttributes || {};
 
-	            try {
-	                window.Intercom('trackEvent',
-	                    event.EventName,
-	                    event.EventAttributes);
-	            }
-	            catch (e) {
-	                return 'Can\'t log event on forwarder: ' + name + ': ' + e;
-	            }
-	            return 'Successfully logged event from forwarder: ' + name;
-	        }
+              try {
+                  window.Intercom('boot', obj);
+              }
+              catch (e) {
+                  return 'Can\'t initialize forwarder: ' + name + ': ' + e;
+              }
+              return 'Successfully booted: ' + name;
+          }
 
-	        function setUserAttribute(key, value) {
-	            if (!isInitialized) {
-	                return 'Can\'t set user identity on forwarder: ' + name + ', not initialized';
-	            }
 
-	            var attr = createObject(key, value);
+          function processEvent(event) {
+              var reportEvent = false;
 
-	            try {
-	                window.Intercom('update', attr);
-	            }
-	            catch (e) {
-	                return 'Can\'t set user attribute on forwarder: ' + name + ': ' + e;
-	            }
-	            return 'Successfully called update on forwarder: ' + name;
-	        }
+              if (!isInitialized) {
+                  return 'Can\'t send to forwarder: ' + name + ', not initialized';
+              }
 
-	        function setUserIdentity(id, type) {
+              try {
+                  if (event.EventDataType == MessageType.PageEvent ||
+                      event.EventDataType == MessageType.PageView) {
 
-	            if (!isInitialized) {
-	                return 'Can\'t call setUserIdentity on forwarder: ' + name + ', not initialized';
-	            }
+                      reportEvent = true;
+                      logEvent(event);
 
-	            if(!id) {
-	                return 'Can\'t call setUserIdentity on forwarder: ' + name + ', without id or email';
-	            }
+                      if(reportingService) {
+                          reportingService(self, event);
+                      }
+                  }
+                  return 'Successfully sent to forwarder: ' + name;
+              }
+              catch (e) {
+                  return 'Can\'t send to forwarder: ' + name + ' ' + e;
+              }
+          }
 
-	            var key = '';
+          function logEvent(event) {
+              if (!isInitialized) {
+                  return 'Can\'t log event on forwarder: ' + name + ', not initialized';
+              }
 
-	            if(window.mParticle.IdentityType.CustomerId === type) {
-	                key = 'user_id';
-	            }
-	            else if(window.mParticle.IdentityType.Email === type) {
-	                key = 'email';
-	            }
-	            else {
-	                return;
-	            }
+              if(!event.EventName) {
+                  return 'Can\'t log event on forwarder: ' + name + ', no event name';
+              }
 
-	            var obj = createObject(key, id);
+              event.EventAttributes = event.EventAttributes || {};
 
-	            try {
-	                window.Intercom('update', obj);
-	            }
-	            catch(e) {
-	                return 'Can\'t call identify on forwarder: ' + name + ': ' + e;
-	            }
-	            return 'Successfully called update on forwarder: ' + name;
-	        }
+              try {
+                  window.Intercom('trackEvent',
+                      event.EventName,
+                      event.EventAttributes);
+              }
+              catch (e) {
+                  return 'Can\'t log event on forwarder: ' + name + ': ' + e;
+              }
+              return 'Successfully logged event from forwarder: ' + name;
+          }
 
-	        this.init             = initForwarder;
-	        this.process          = processEvent;
-	        this.setUserAttribute = setUserAttribute;
-	        this.setUserIdentity  = setUserIdentity;
-	    };
+          function setUserAttribute(key, value) {
+              if (!isInitialized) {
+                  return 'Can\'t set user identity on forwarder: ' + name + ', not initialized';
+              }
 
-	    function getId() {
-	        return moduleId;
-	    }
+              var attr = createObject(key, value);
 
-	    function register(config) {
-	        if (config.kits) {
-	            config.kits[name] = {
-	                constructor: constructor
-	            };
-	        }
-	    }
+              try {
+                  window.Intercom('update', attr);
+              }
+              catch (e) {
+                  return 'Can\'t set user attribute on forwarder: ' + name + ': ' + e;
+              }
+              return 'Successfully called update on forwarder: ' + name;
+          }
 
-	    if (!window ||
-	        !window.mParticle ||
-	        !window.mParticle.addForwarder) {
+          function setUserIdentity(id, type) {
 
-	        return;
-	    }
+              if (!isInitialized) {
+                  return 'Can\'t call setUserIdentity on forwarder: ' + name + ', not initialized';
+              }
 
-	    window.mParticle.addForwarder({
-	        name       : name,
-	        constructor: constructor,
-	        getId: getId
-	    });
+              if(!id) {
+                  return 'Can\'t call setUserIdentity on forwarder: ' + name + ', without id or email';
+              }
 
-	    module.exports = {
-	        register: register
-	    };
+              var key = '';
 
-	})(window);
-	});
-	var IntercomEventForwarder_1 = IntercomEventForwarder.register;
+              if(window.mParticle.IdentityType.CustomerId === type) {
+                  key = 'user_id';
+              }
+              else if(window.mParticle.IdentityType.Email === type) {
+                  key = 'email';
+              }
+              else {
+                  return;
+              }
 
-	exports.default = IntercomEventForwarder;
-	exports.register = IntercomEventForwarder_1;
+              var obj = createObject(key, id);
 
-	Object.defineProperty(exports, '__esModule', { value: true });
+              try {
+                  window.Intercom('update', obj);
+              }
+              catch(e) {
+                  return 'Can\'t call identify on forwarder: ' + name + ': ' + e;
+              }
+              return 'Successfully called update on forwarder: ' + name;
+          }
 
-}));
+          this.init             = initForwarder;
+          this.process          = processEvent;
+          this.setUserAttribute = setUserAttribute;
+          this.setUserIdentity  = setUserIdentity;
+      };
+
+      function getId() {
+          return moduleId;
+      }
+
+      function register(config) {
+          if (!config) {
+              window.console.log('You must pass a config object to register the kit ' + name);
+              return;
+          }
+
+          if (!isObject(config)) {
+              window.console.log('\'config\' must be an object. You passed in a ' + typeof config);
+              return;
+          }
+
+          if (isObject(config.kits)) {
+              config.kits[name] = {
+                  constructor: constructor
+              };
+          } else {
+              config.kits = {};
+              config.kits[name] = {
+                  constructor: constructor
+              };
+          }
+          window.console.log('Successfully registered ' + name + ' to your mParticle configuration');
+      }
+
+      if (window && window.mParticle && window.mParticle.addForwarder) {
+          window.mParticle.addForwarder({
+              name: name,
+              constructor: constructor,
+              getId: getId
+          });
+      }
+
+      var IntercomEventForwarder = {
+          register: register
+      };
+  var IntercomEventForwarder_1 = IntercomEventForwarder.register;
+
+  exports.default = IntercomEventForwarder;
+  exports.register = IntercomEventForwarder_1;
+
+  return exports;
+
+}({}));
