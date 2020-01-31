@@ -1,8 +1,9 @@
 {
   "name": "@mparticle/web-intercom-kit",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.1",
   "author": "mParticle Developers <developers@mparticle.com> (https://www.mparticle.com)",
   "description": "mParticle integration sdk for Intercom",
+  "main": "dist/IntercomEventForwarder.common.js",
   "browser": "dist/IntercomEventForwarder.common.js",
   "files": [
     "dist/IntercomEventForwarder.common.js"
