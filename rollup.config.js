@@ -5,22 +5,6 @@ export default [
     {
         input: 'src/IntercomEventForwarder.js',
         output: {
-            file: 'IntercomEventForwarder.js',
-            format: 'iife',
-            exports: 'named',
-            name: 'mpIntercomKit',
-            strict: false
-        },
-        plugins: [
-            resolve({
-                browser: true
-            }),
-            commonjs()
-        ]
-    },
-    {
-        input: 'src/IntercomEventForwarder.js',
-        output: {
             file: 'dist/IntercomEventForwarder.iife.js',
             format: 'iife',
             exports: 'named',
